@@ -1,0 +1,195 @@
+{
+  "WFWorkflowMinimumClientVersionString": "900",
+  "WFWorkflowMinimumClientVersion": 900,
+  "WFWorkflowIcon": {
+    "WFWorkflowIconStartColor": 2071128575,
+    "WFWorkflowIconGlyphNumber": 61440
+  },
+  "WFWorkflowClientVersion": "2605.0.5",
+  "WFWorkflowOutputContentItemClasses": [],
+  "WFWorkflowHasOutputFallback": false,
+  "WFWorkflowActions": [
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": {
+          "Value": {
+            "string": "正在设置定位...",
+            "attachmentsByRange": {}
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.shownotification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionTitle": "GeoPort",
+        "WFNotificationActionBody": {
+          "Value": {
+            "string": "正在设置定位...",
+            "attachmentsByRange": {}
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getinput",
+      "WFWorkflowActionParameters": {
+        "WFInputType": "Text"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.text.split",
+      "WFWorkflowActionParameters": {
+        "WFTextSeparator": "Custom",
+        "WFTextCustomSeparator": ","
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getitemfromlist",
+      "WFWorkflowActionParameters": {
+        "WFItemSpecifier": "First Item"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.setvariable",
+      "WFWorkflowActionParameters": {
+        "WFVariableName": "Latitude"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getitemfromlist",
+      "WFWorkflowActionParameters": {
+        "WFItemSpecifier": "Item At Index",
+        "WFItemIndex": 2
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.setvariable",
+      "WFWorkflowActionParameters": {
+        "WFVariableName": "Longitude"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getcontentsofurl",
+      "WFWorkflowActionParameters": {
+        "WFHTTPMethod": "POST",
+        "WFHTTPHeaders": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer demo_token"
+        },
+        "WFHTTPBodyType": "JSON",
+        "WFJSONValues": {
+          "latitude": {
+            "Value": {
+              "VariableName": "Latitude",
+              "Type": "Variable"
+            },
+            "WFSerializationType": "WFTextTokenString"
+          },
+          "longitude": {
+            "Value": {
+              "VariableName": "Longitude",
+              "Type": "Variable"
+            },
+            "WFSerializationType": "WFTextTokenString"
+          },
+          "device_id": {
+            "Value": {
+              "string": "shortcuts_device",
+              "attachmentsByRange": {}
+            },
+            "WFSerializationType": "WFTextTokenString"
+          },
+          "source": "shortcuts"
+        },
+        "WFURL": "https://api.geoport.example.com/v1/set-location"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getvalueforkey",
+      "WFWorkflowActionParameters": {
+        "WFDictionaryKey": "success"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.conditional",
+      "WFWorkflowActionParameters": {
+        "WFCondition": 4,
+        "WFConditionalActionString": "true",
+        "GroupingIdentifier": "success_check"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": {
+          "Value": {
+            "string": "定位设置成功！\n纬度: 纬度变量\n经度: 经度变量",
+            "attachmentsByRange": {
+              "{9, 4}": {
+                "VariableName": "Latitude",
+                "Type": "Variable"
+              },
+              "{17, 4}": {
+                "VariableName": "Longitude",
+                "Type": "Variable"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.shownotification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionTitle": "GeoPort - 成功",
+        "WFNotificationActionBody": {
+          "Value": {
+            "string": "定位设置成功！",
+            "attachmentsByRange": {}
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.otherwise",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "success_check"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.shownotification",
+      "WFWorkflowActionParameters": {
+        "WFNotificationActionTitle": "GeoPort - 失败",
+        "WFNotificationActionBody": {
+          "Value": {
+            "string": "定位设置失败，请检查网络连接",
+            "attachmentsByRange": {}
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.endif",
+      "WFWorkflowActionParameters": {
+        "GroupingIdentifier": "success_check"
+      }
+    }
+  ],
+  "WFWorkflowInputContentItemClasses": [
+    "WFStringContentItem"
+  ],
+  "WFWorkflowImportQuestions": [],
+  "WFQuickActionSurfaces": [],
+  "WFWorkflowTypes": [
+    "NCWidget",
+    "WatchKit"
+  ],
+  "WFWorkflowHasShortcutInputVariables": true
+}

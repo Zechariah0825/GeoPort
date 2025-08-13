@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>PayloadDescription</key>
+            <string>GeoPort Location Services Configuration</string>
+            <key>PayloadDisplayName</key>
+            <string>GeoPort定位服务</string>
+            <key>PayloadIdentifier</key>
+            <string>com.geoport.location.config</string>
+            <key>PayloadType</key>
+            <string>com.apple.locationservices</string>
+            <key>PayloadUUID</key>
+            <string>A1B2C3D4-E5F6-7890-ABCD-EF1234567890</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>LocationServicesEnabled</key>
+            <true/>
+            <key>AllowLocationBasedAlerts</key>
+            <true/>
+            <key>AllowLocationBasedSuggestions</key>
+            <true/>
+        </dict>
+        <dict>
+            <key>PayloadDescription</key>
+            <string>Web Clip for GeoPort Mobile App</string>
+            <key>PayloadDisplayName</key>
+            <string>GeoPort Mobile</string>
+            <key>PayloadIdentifier</key>
+            <string>com.geoport.webclip</string>
+            <key>PayloadType</key>
+            <string>com.apple.webClip.managed</string>
+            <key>PayloadUUID</key>
+            <string>B2C3D4E5-F6G7-8901-BCDE-F23456789012</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>URL</key>
+            <string>https://your-domain.com/geoport-mobile</string>
+            <key>Label</key>
+            <string>GeoPort</string>
+            <key>Icon</key>
+            <data>
+                <!-- Base64编码的应用图标数据 -->
+                iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==
+            </data>
+            <key>IsRemovable</key>
+            <true/>
+            <key>FullScreen</key>
+            <true/>
+        </dict>
+    </array>
+    <key>PayloadDescription</key>
+    <string>GeoPort移动端配置文件，用于启用定位服务和安装Web应用</string>
+    <key>PayloadDisplayName</key>
+    <string>GeoPort Mobile Configuration</string>
+    <key>PayloadIdentifier</key>
+    <string>com.geoport.mobile.config</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>C3D4E5F6-G7H8-9012-CDEF-345678901234</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadOrganization</key>
+    <string>GeoPort</string>
+</dict>
+</plist>

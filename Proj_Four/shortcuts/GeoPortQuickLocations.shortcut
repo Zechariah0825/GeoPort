@@ -1,0 +1,120 @@
+{
+  "WFWorkflowMinimumClientVersionString": "900",
+  "WFWorkflowMinimumClientVersion": 900,
+  "WFWorkflowIcon": {
+    "WFWorkflowIconStartColor": 946986751,
+    "WFWorkflowIconGlyphNumber": 61440
+  },
+  "WFWorkflowClientVersion": "2605.0.5",
+  "WFWorkflowOutputContentItemClasses": [],
+  "WFWorkflowHasOutputFallback": false,
+  "WFWorkflowActions": [
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.choosefromlist",
+      "WFWorkflowActionParameters": {
+        "WFChooseFromListActionPrompt": "选择要设置的城市位置",
+        "WFChooseFromListActionSelectMultiple": false,
+        "WFChooseFromListActionSelectAll": false,
+        "WFChooseFromListItems": [
+          "🏛️ 北京 (39.9042, 116.4074)",
+          "🏙️ 上海 (31.2304, 121.4737)",
+          "🌆 深圳 (22.5431, 114.0579)",
+          "🌃 香港 (22.3193, 114.1694)",
+          "🗽 纽约 (40.7128, -74.0060)",
+          "🎡 伦敦 (51.5074, -0.1278)",
+          "🗼 东京 (35.6762, 139.6503)",
+          "🗼 巴黎 (48.8566, 2.3522)",
+          "🏔️ 悉尼 (-33.8688, 151.2093)",
+          "🌴 洛杉矶 (34.0522, -118.2437)"
+        ]
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.text.match",
+      "WFWorkflowActionParameters": {
+        "WFMatchTextPattern": "\\(([^,]+), ([^)]+)\\)",
+        "WFMatchTextCaseSensitive": false
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getitemfromlist",
+      "WFWorkflowActionParameters": {
+        "WFItemSpecifier": "First Item"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.text.match",
+      "WFWorkflowActionParameters": {
+        "WFMatchTextPattern": "([^,]+), (.+)",
+        "WFMatchTextCaseSensitive": false
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getitemfromlist",
+      "WFWorkflowActionParameters": {
+        "WFItemSpecifier": "First Item"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.setvariable",
+      "WFWorkflowActionParameters": {
+        "WFVariableName": "Latitude"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getitemfromlist",
+      "WFWorkflowActionParameters": {
+        "WFItemSpecifier": "Item At Index",
+        "WFItemIndex": 2
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.setvariable",
+      "WFWorkflowActionParameters": {
+        "WFVariableName": "Longitude"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.gettext",
+      "WFWorkflowActionParameters": {
+        "WFTextActionText": {
+          "Value": {
+            "string": "纬度变量,经度变量",
+            "attachmentsByRange": {
+              "{0, 4}": {
+                "VariableName": "Latitude",
+                "Type": "Variable"
+              },
+              "{5, 4}": {
+                "VariableName": "Longitude",
+                "Type": "Variable"
+              }
+            }
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.runworkflow",
+      "WFWorkflowActionParameters": {
+        "WFWorkflowName": "GeoPortLocation",
+        "WFWorkflowInput": {
+          "Value": {
+            "OutputUUID": "previous_action_output",
+            "Type": "ActionOutput"
+          },
+          "WFSerializationType": "WFTextTokenString"
+        }
+      }
+    }
+  ],
+  "WFWorkflowInputContentItemClasses": [],
+  "WFWorkflowImportQuestions": [],
+  "WFQuickActionSurfaces": [],
+  "WFWorkflowTypes": [
+    "NCWidget",
+    "WatchKit"
+  ],
+  "WFWorkflowHasShortcutInputVariables": false
+}

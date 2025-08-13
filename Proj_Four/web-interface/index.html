@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoPort 快捷指令控制面板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #dee2e6;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background: #6c757d;
+        }
+
+        .status-dot.active {
+            background: #28a745;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+
+        .status-text {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .current-location {
+            font-size: 14px;
+            color: #6c757d;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-row input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-row input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .quick-locations {
+            margin-top: 25px;
+        }
+
+        .quick-locations h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .location-btn {
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .location-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .location-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .location-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .setup-guide {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            border: 1px solid #dee2e6;
+        }
+
+        .setup-guide h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setup-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .setup-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+            color: #495057;
+            line-height: 1.5;
+        }
+
+        .setup-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #667eea;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .input-row {
+                flex-direction: column;
+            }
+            
+            .location-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 GeoPort</h1>
+            <p>快捷指令定位控制面板</p>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <div class="status-card">
+            <div class="status-indicator">
+                <div class="status-dot" id="status-dot"></div>
+                <span class="status-text" id="status-text">未连接</span>
+            </div>
+            <div class="current-location" id="current-location">
+                当前位置: 未设置
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>设置坐标位置</label>
+            <div class="input-row">
+                <input type="number" id="latitude" placeholder="纬度 (例如: 39.9042)" step="any">
+                <input type="number" id="longitude" placeholder="经度 (例如: 116.4074)" step="any">
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="setLocation()">
+            📍 设置定位
+        </button>
+
+        <button class="btn btn-success" onclick="getCurrentLocation()">
+            📱 获取当前位置
+        </button>
+
+        <button class="btn btn-danger" onclick="stopLocation()">
+            🛑 停止定位修改
+        </button>
+
+        <button class="btn btn-secondary" onclick="openQuickLocations()">
+            🌏 快速定位选择
+        </button>
+
+        <div class="quick-locations">
+            <h3>热门城市</h3>
+            <div class="location-grid">
+                <div class="location-btn" onclick="setQuickLocation(39.9042, 116.4074, '北京')">
+                    <span class="location-icon">🏛️</span>
+                    <span class="location-name">北京</span>
+                </div>
+                <div class="location-btn" onclick="setQuickLocation(31.2304, 121.4737, '上海')">
+                    <span class="location-icon">🏙️</span>
+                    <span class="location-name">上海</span>
+                </div>
+                <div class="location-btn" onclick="setQuickLocation(22.5431, 114.0579, '深圳')">
+                    <span class="location-icon">🌆</span>
+                    <span class="location-name">深圳</span>
+                </div>
+                <div class="location-btn" onclick="setQuickLocation(22.3193, 114.1694, '香港')">
+                    <span class="location-icon">🌃</span>
+                    <span class="location-name">香港</span>
+                </div>
+                <div class="location-btn" onclick="setQuickLocation(40.7128, -74.0060, '纽约')">
+                    <span class="location-icon">🗽</span>
+                    <span class="location-name">纽约</span>
+                </div>
+                <div class="location-btn" onclick="setQuickLocation(51.5074, -0.1278, '伦敦')">
+                    <span class="location-icon">🎡</span>
+                    <span class="location-name">伦敦</span>
+                </div>
+                <div class="location-btn" onclick="setQuickLocation(35.6762, 139.6503, '东京')">
+                    <span class="location-icon">🗼</span>
+                    <span class="location-name">东京</span>
+                </div>
+                <div class="location-btn" onclick="setQuickLocation(48.8566, 2.3522, '巴黎')">
+                    <span class="location-icon">🗼</span>
+                    <span class="location-name">巴黎</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="setup-guide">
+            <h3>⚙️ 设置指南</h3>
+            <ol class="setup-steps">
+                <li>打开iPhone的"快捷指令"应用</li>
+                <li>点击右上角的"+"创建新快捷指令</li>
+                <li>搜索并添加"获取输入"操作</li>
+                <li>添加"分割文本"操作，分隔符设为逗号</li>
+                <li>添加"获取网页内容"操作，配置API请求</li>
+                <li>保存快捷指令，命名为"GeoPortLocation"</li>
+                <li>返回此页面，点击按钮即可使用</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let isLocationActive = false;
+        let currentLat = null;
+        let currentLng = null;
+
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function updateStatus(active, lat = null, lng = null) {
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            const currentLocation = document.getElementById('current-location');
+            
+            isLocationActive = active;
+            
+            if (active) {
+                statusDot.classList.add('active');
+                statusText.textContent = '定位修改中';
+                if (lat && lng) {
+                    currentLat = lat;
+                    currentLng = lng;
+                    currentLocation.textContent = `当前位置: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                }
+            } else {
+                statusDot.classList.remove('active');
+                statusText.textContent = '未修改定位';
+                currentLocation.textContent = '当前位置: 未设置';
+                currentLat = null;
+                currentLng = null;
+            }
+        }
+
+        function setLocation() {
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lng = parseFloat(document.getElementById('longitude').value);
+            
+            if (isNaN(lat) || isNaN(lng)) {
+                showAlert('请输入有效的经纬度', 'error');
+                return;
+            }
+            
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                showAlert('坐标超出有效范围', 'error');
+                return;
+            }
+            
+            // 调用快捷指令
+            const shortcutURL = `shortcuts://run-shortcut?name=GeoPortLocation&input=${lat},${lng}`;
+            
+            try {
+                window.location.href = shortcutURL;
+                updateStatus(true, lat, lng);
+                showAlert(`定位已设置为: ${lat.toFixed(4)}, ${lng.toFixed(4)}`, 'success');
+            } catch (error) {
+                showAlert('调用快捷指令失败，请确保已正确配置', 'error');
+            }
+        }
+
+        function setQuickLocation(lat, lng, name) {
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+            
+            const shortcutURL = `shortcuts://run-shortcut?name=GeoPortLocation&input=${lat},${lng}`;
+            
+            try {
+                window.location.href = shortcutURL;
+                updateStatus(true, lat, lng);
+                showAlert(`已设置定位到${name}`, 'success');
+            } catch (error) {
+                showAlert('调用快捷指令失败，请确保已正确配置', 'error');
+            }
+        }
+
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                showAlert('正在获取当前位置...', 'info');
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        document.getElementById('latitude').value = lat.toFixed(6);
+                        document.getElementById('longitude').value = lng.toFixed(6);
+                        
+                        showAlert('已获取当前位置', 'success');
+                    },
+                    (error) => {
+                        let errorMessage = '无法获取位置信息';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = '位置访问被拒绝';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = '位置信息不可用';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = '获取位置超时';
+                                break;
+                        }
+                        showAlert(errorMessage, 'error');
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                showAlert('浏览器不支持定位功能', 'error');
+            }
+        }
+
+        function stopLocation() {
+            const shortcutURL = 'shortcuts://run-shortcut?name=GeoPortStop';
+            
+            try {
+                window.location.href = shortcutURL;
+                updateStatus(false);
+                showAlert('已停止定位修改', 'success');
+            } catch (error) {
+                showAlert('调用快捷指令失败', 'error');
+            }
+        }
+
+        function openQuickLocations() {
+            const shortcutURL = 'shortcuts://run-shortcut?name=GeoPortQuickLocations';
+            
+            try {
+                window.location.href = shortcutURL;
+                showAlert('正在打开快速定位选择...', 'info');
+            } catch (error) {
+                showAlert('调用快捷指令失败，请确保已正确配置', 'error');
+            }
+        }
+
+        // 页面加载时检查状态
+        window.addEventListener('load', () => {
+            // 检查是否从快捷指令返回
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const lat = urlParams.get('lat');
+            const lng = urlParams.get('lng');
+            
+            if (status === 'success' && lat && lng) {
+                updateStatus(true, parseFloat(lat), parseFloat(lng));
+                showAlert('定位设置成功', 'success');
+            } else if (status === 'stopped') {
+                updateStatus(false);
+                showAlert('已停止定位修改', 'success');
+            }
+            
+            // 显示欢迎信息
+            setTimeout(() => {
+                showAlert('欢迎使用GeoPort快捷指令控制面板', 'info');
+            }, 1000);
+        });
+
+        // 添加键盘快捷键支持
+        document.addEventListener('keydown', (event) => {
+            if (event.ctrlKey || event.metaKey) {
+                switch(event.key) {
+                    case 'Enter':
+                        event.preventDefault();
+                        setLocation();
+                        break;
+                    case 'l':
+                        event.preventDefault();
+                        getCurrentLocation();
+                        break;
+                    case 's':
+                        event.preventDefault();
+                        stopLocation();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>""
