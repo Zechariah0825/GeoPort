@@ -548,6 +548,10 @@
             }
         }
 
+        // API配置 - 自动检测当前域名
+        const API_BASE_URL = window.location.origin + '/api/v1';
+        const AUTH_TOKEN = 'demo_token';
+
         // 页面加载时检查状态
         window.addEventListener('load', () => {
             // 检查是否从快捷指令返回
@@ -564,11 +568,29 @@
                 showAlert('已停止定位修改', 'success');
             }
             
-            // 显示欢迎信息
+            // 显示欢迎信息和API状态
             setTimeout(() => {
                 showAlert('欢迎使用GeoPort快捷指令控制面板', 'info');
+                checkAPIStatus();
             }, 1000);
         });
+
+        // 检查API状态
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL.replace('/v1', '')}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('API状态:', data);
+                    showAlert(`API服务正常 (${data.platform})`, 'success');
+                } else {
+                    showAlert('API服务异常', 'error');
+                }
+            } catch (error) {
+                console.error('API检查失败:', error);
+                showAlert('无法连接到API服务', 'error');
+            }
+        }
 
         // 添加键盘快捷键支持
         document.addEventListener('keydown', (event) => {

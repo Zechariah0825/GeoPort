@@ -210,54 +210,81 @@ const limiter = rateLimit({
 ```
 
 ### 快捷指令配置
-在快捷指令中修改：
+部署到 Vercel 后，在快捷指令中修改：
 
 ```
-URL: https://your-api-server.com/v1/set-location
-Authorization: Bearer your_api_token
+URL: https://your-vercel-app.vercel.app/api/v1/set-location
+Authorization: Bearer demo_token
 ```
 
 ### Web界面配置
-在`web-interface/index.html`中修改：
+Web界面会自动检测当前域名，无需手动配置。如需自定义：
 
 ```javascript
-// API基础URL
-const API_BASE_URL = 'https://your-api-server.com/v1';
-
-// 认证token
-const AUTH_TOKEN = 'your_api_token';
+// 在 web-interface/index.html 中
+const API_BASE_URL = window.location.origin + '/api/v1';
+const AUTH_TOKEN = 'demo_token';
 ```
 
 ## 部署指南
 
-### 本地部署
+### 🚀 一键部署到 Vercel（推荐）
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Fgeoport-shortcuts&project-name=geoport-shortcuts&repository-name=geoport-shortcuts)
+
+**优势：**
+- 零配置部署
+- 自动 HTTPS
+- 全球 CDN 加速
+- 自动扩容
+- 免费额度充足
+
+**部署步骤：**
+1. 点击上方部署按钮
+2. 使用 GitHub 登录 Vercel
+3. 等待自动部署完成
+4. 获取部署地址并更新快捷指令配置
+
+详细说明请查看：[README-VERCEL.md](./README-VERCEL.md)
+
+### 本地开发
 ```bash
 # 克隆项目
 git clone https://github.com/geoport/shortcuts.git
 cd Proj_Four
 
 # 安装依赖
-cd server && npm install
+npm install
 
-# 启动服务
-npm start
+# 启动开发服务器
+npm run dev
+# 或使用 Vercel CLI
+vercel dev
 ```
 
-### 云服务器部署
+### 其他部署方式
+
+#### 传统服务器部署
+```bash
+# 使用原始 Express 服务器
+cd server
+npm install
+npm start
+```
 
 #### 使用Docker
 ```dockerfile
 FROM node:18-alpine
 
 WORKDIR /app
-COPY server/package*.json ./
+COPY package*.json ./
 RUN npm ci --only=production
 
-COPY server/ .
-COPY web-interface/ ./public/
+COPY api/ ./api/
+COPY web-interface/ ./web-interface/
 
 EXPOSE 3000
-CMD ["node", "app.js"]
+CMD ["node", "api/index.js"]
 ```
 
 #### 使用PM2
@@ -266,68 +293,11 @@ CMD ["node", "app.js"]
 npm install -g pm2
 
 # 启动应用
-pm2 start server/app.js --name geoport-shortcuts
+pm2 start api/index.js --name geoport-shortcuts
 
 # 设置开机自启
 pm2 startup
 pm2 save
-```
-
-#### 使用Nginx反向代理
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-    
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-### 云平台部署
-
-#### Vercel部署
-```json
-{
-  "version": 2,
-  "builds": [
-    {
-      "src": "server/app.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server/app.js"
-    }
-  ]
-}
-```
-
-#### Heroku部署
-```json
-{
-  "name": "geoport-shortcuts",
-  "description": "GeoPort快捷指令服务器",
-  "repository": "https://github.com/geoport/shortcuts",
-  "keywords": ["geoport", "location", "shortcuts"],
-  "env": {
-    "NODE_ENV": {
-      "description": "Node环境",
-      "value": "production"
-    }
-  }
-}
 ```
 
 ## 安全考虑

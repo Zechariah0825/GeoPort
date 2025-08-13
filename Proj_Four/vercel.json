@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "name": "geoport-shortcuts",
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/web-interface/$1"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
